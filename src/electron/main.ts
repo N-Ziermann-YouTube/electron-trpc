@@ -1,7 +1,8 @@
 import { app, BrowserWindow } from 'electron';
-import { ipcMainHandle, ipcWebContentsSend, isDev } from './util.js';
+import { isDev } from './util.js';
 import { getPreloadPath, getUIPath } from './pathResolver.js';
 import { DEV_PORT } from './constants.js';
+import { registerTrpcIpcListener } from './trpc.js';
 
 app.on('ready', () => {
   const mainWindow = new BrowserWindow({
@@ -16,15 +17,5 @@ app.on('ready', () => {
     mainWindow.loadFile(getUIPath());
   }
 
-  ipcMainHandle('requestExample', () => {
-    return { message: 'Hello World' };
-  });
-
-  let changingMessageNumber = 1;
-  setInterval(() => {
-    ipcWebContentsSend('exampleChanged', mainWindow.webContents, {
-      message: `Message Number: ${changingMessageNumber}`,
-    });
-    changingMessageNumber++;
-  }, 500);
+  registerTrpcIpcListener();
 });

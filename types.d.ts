@@ -1,19 +1,12 @@
-type ExamplePayload = {
-  message: string;
-};
+type JsonString = string;
 
-type EventPayloadMapping = {
-  exampleChanged: ExamplePayload;
-  requestExample: ExamplePayload;
+type TrpcEvent = {
+  procedureName: string;
+  data: JsonString;
 };
-
-type UnsubscribeFunction = () => void;
 
 interface Window {
   electron: {
-    subscribeExample: (
-      callback: (example: ExamplePayload) => void
-    ) => UnsubscribeFunction;
-    getExample: () => Promise<ExamplePayload>;
+    sendTrpcEvent: (payload: TrpcEvent) => Promise<any>;
   };
 }

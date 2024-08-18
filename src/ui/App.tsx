@@ -1,22 +1,22 @@
-import { useSubscribe } from './hooks/useSubscribe';
+import { useEffect, useState } from 'react';
+import { trpcClient } from './trpc';
 
 function App() {
-  const currentValue = useSubscribe(window.electron.subscribeExample);
+  const [count, setCount] = useState(1);
+  const [double, setDouble] = useState(0);
 
-  if (!currentValue) {
-    return;
-  }
+  useEffect(() => {
+    trpcClient.double.query({ value: count }).then((res) => {
+      setDouble(res.double);
+    });
+
+    trpcClient.test.mutate().then(console.log);
+  }, [count]);
 
   return (
     <center>
-      <h3>{currentValue.message}</h3>
-      <button
-        onClick={async () =>
-          alert((await window.electron.getExample()).message)
-        }
-      >
-        Click me
-      </button>
+      <button onClick={() => setCount((prev) => prev + 1)}>{count}</button>
+      <div>{double}</div>
     </center>
   );
 }
